@@ -8,7 +8,6 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib
   roscpp
   control_msgs
-  ahbstring
   urdf
 )
 

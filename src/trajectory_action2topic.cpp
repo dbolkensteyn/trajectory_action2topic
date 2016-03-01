@@ -2,13 +2,21 @@
 
 // system includes
 #include <numeric>
+#include <string>
 
 // library includes
-#include <ahbstring.h>
 #include <urdf/model.h>
 
 // custom includes
 
+
+static bool hasEnding(std::string const &fullString, std::string const &ending) {
+    if (fullString.length() >= ending.length()) {
+        return (0 == fullString.compare (fullString.length() - ending.length(), ending.length(), ending));
+    } else {
+        return false;
+    }
+}
 
 /*---------------------------------- public: -----------------------------{{{-*/
 std::vector<double>
@@ -75,7 +83,7 @@ TrajectoryAction2Topic::onGoal(const control_msgs::FollowJointTrajectoryGoalCons
       m_actionServer.setSucceeded(m_result);
       return;
     }
-    ROS_INFO_STREAM("m_currJointState.name: " << ahb::string::toString(m_currJointState.name) << " goal->trajectory.joint_names: " << ahb::string::toString(goal->trajectory.joint_names) << " jointMap: " << ahb::string::toString(jointMap));
+    //ROS_INFO_STREAM("m_currJointState.name: " << std::string(m_currJointState.name) << " goal->trajectory.joint_names: " << std::string(goal->trajectory.joint_names) << " jointMap: " << std::string(jointMap));
   } else {
     for (size_t jointIdx = 0; jointIdx < goal->trajectory.points[0].positions.size(); jointIdx++) {
       jointMap[jointIdx] = jointIdx;
@@ -133,7 +141,7 @@ TrajectoryAction2Topic::onGoal(const control_msgs::FollowJointTrajectoryGoalCons
       }
     }
     if (limit_exceeded) {
-      ROS_ERROR_STREAM("Too high position error: " << ahb::string::toString(m_feedback.error.positions));
+      //ROS_ERROR_STREAM("Too high position error: " << std::string(m_feedback.error.positions));
       m_result.error_code = m_result.PATH_TOLERANCE_VIOLATED;
       m_actionServer.setAborted(m_result);
       success = false;
@@ -169,7 +177,7 @@ TrajectoryAction2Topic::rename_joints(const std::string& robot_name, const std::
     std::vector<std::string> targetNames;
     for (std::map<std::string, boost::shared_ptr<urdf::Joint> >::iterator jointIter = model.joints_.begin(); jointIter != model.joints_.end(); ++jointIter) {
       //std::cout << jointIter->first << std::endl;
-      if (ahb::string::endswith(jointIter->first, fullOrigName)) {
+      if (hasEnding(jointIter->first, fullOrigName)) {
         targetNames.push_back(jointIter->first);
       }
     }
@@ -180,10 +188,11 @@ TrajectoryAction2Topic::rename_joints(const std::string& robot_name, const std::
 
     m_renamed_curr_joints.push_back(targetNames[0]);
   }
-  ROS_INFO_STREAM("renamed joints: " << ahb::string::toString(m_renamed_curr_joints));
+  //ROS_INFO_STREAM("renamed joints: " << std::string(m_renamed_curr_joints));
 
   m_rename_joints = true;
 }
+
 /*------------------------------------------------------------------------}}}-*/
 
 /*--------------------------------- protected: ---------------------------{{{-*/
