@@ -128,8 +128,9 @@ TrajectoryAction2Topic::onGoal(const control_msgs::FollowJointTrajectoryGoalCons
     m_feedback.actual.velocities = m_currJointState.velocity;
     sinceStart = ros::Time::now() - startTime;
     m_feedback.actual.time_from_start = sinceStart;
-    m_feedback.error.positions = m_targetJointState.position - m_feedback.actual.positions;
-    m_feedback.error.velocities = m_targetJointState.velocity - m_feedback.actual.velocities;
+    // FIXME(dinesh) segfaults here!
+    // m_feedback.error.positions = m_targetJointState.position - m_feedback.actual.positions;
+    // m_feedback.error.velocities = m_targetJointState.velocity - m_feedback.actual.velocities;
     m_actionServer.publishFeedback(m_feedback);
 
     //double accumulated_position_error = std::accumulate(m_feedback.error.positions.begin(), m_feedback.error.positions.end(), 0.0, plusabs<double>);
